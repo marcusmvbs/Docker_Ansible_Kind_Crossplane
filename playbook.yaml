@@ -1,0 +1,46 @@
+---
+- name: Install Helm, .NET Core,  Kind cluster
+  hosts: localhost
+  tasks:
+    - name: Add Helm repository
+      community.kubernetes.helm_repository:
+        name: stable
+        repo_url: https://charts.helm.sh/stable
+        state: present
+
+    # - name: Install Helm chart
+    #   community.kubernetes.helm:
+    #     name: my-chart
+    #     chart_ref: stable/my-chart
+    #     release_namespace: my-namespace
+    #     state: present
+    #     wait: yes
+
+    # - name: Install .NET repository
+    #   shell: |
+    #     wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    #     sudo dpkg -i packages-microsoft-prod.deb
+
+    # - name: Install .NET SDK
+    #   apt:
+    #     name: dotnet-sdk-5.0
+    #     state: present
+
+    - name: Create Kind cluster
+      shell: kind create cluster --name my-cluster
+
+    - name: Wait for Kind cluster to be ready
+      wait_for:
+        host: localhost
+        port: 6443
+        delay: 10
+        timeout: 600
+
+#- name: Apply cluster config
+#  hosts: localhost
+#  tasks:
+#    - name: Apply .NET server manifests
+#      kubectl:
+#        src: /path/to/.net-server-manifests
+#        kubeconfig: /root/.kube/config
+#        state: present

@@ -18,6 +18,7 @@ RUN echo "Updating package index..." && \
 RUN pip3 install --no-cache-dir --upgrade pip && \
     ansible --version
 
+# --- Ansible should cover from this part --- #
 # Install Docker
 RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     sh get-docker.sh && \
@@ -54,6 +55,11 @@ RUN echo 'root:password' | chpasswd && \
 # Storing Kind cluster config
 RUN mkdir -p /kind-config
 COPY kind-config.yaml /kind-config/
+
+# Storing Ansible config
+COPY playbook.yaml /kind-config/
+
+WORKDIR /kind-config
 
 # Set up an entrypoint script to initialize Kind cluster
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
