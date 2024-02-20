@@ -1,40 +1,49 @@
 ---
-- name: Install Helm, .NET Core,  Kind cluster
+- name: Update packages, install Kind, kubectl, helm, create kind cluster
   hosts: localhost
+  become: yes # exec as root
   tasks:
-    - name: Add Helm repository
-      community.kubernetes.helm_repository:
-        name: stable
-        repo_url: https://charts.helm.sh/stable
-        state: present
+    - name: Update Container Packages 
+      apt:
+        update_cache: yes
 
-    # - name: Install Helm chart
-    #   community.kubernetes.helm:
-    #     name: my-chart
-    #     chart_ref: stable/my-chart
-    #     release_namespace: my-namespace
-    #     state: present
-    #     wait: yes
+    - name: Download Kind binary
+      get_url:
+        url: "https://github.com/kubernetes-sigs/kind/releases/download/v0.12.0/kind-linux-amd64"
+        dest: "/usr/local/bin/kind"
+        mode: '0755'
 
-    # - name: Install .NET repository
-    #   shell: |
-    #     wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-    #     sudo dpkg -i packages-microsoft-prod.deb
+    - name: Download kubectl binary
+      get_url:
+        url: "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+      
+    - name: Download Helm binary
+      get_url:
+        url: "https://get.helm.sh/helm-v3.7.1-linux-amd64.tar.gz"
+        dest: "/tmp/helm.tar.gz"
 
-    # - name: Install .NET SDK
-    #   apt:
-    #     name: dotnet-sdk-5.0
-    #     state: present
+    - name: Extract Helm binary
+      ansible.builtin.unarchive:
+        src: "/tmp/helm.tar.gz"
+        dest: "/tmp/"
+
+    - name: Move Helm binary to /usr/local/bin/
+      ansible.builtin.copy:
+        src: "/tmp/linux-amd64/helm"
+        dest: "/usr/local/bin/helm"
+        mode: '0755'
 
     - name: Create Kind cluster
-      shell: kind create cluster --name my-cluster
+      command: kind create cluster --name my-cluster
 
-    - name: Wait for Kind cluster to be ready
-      wait_for:
-        host: localhost
-        port: 6443
-        delay: 10
-        timeout: 600
+    # - name: Wait for Kind cluster to be ready
+    #   wait_for:
+    #     host: localhost
+    #     port: 443
+    #     delay: 10
+    #     timeout: 180
 
 #- name: Apply cluster config
 #  hosts: localhost

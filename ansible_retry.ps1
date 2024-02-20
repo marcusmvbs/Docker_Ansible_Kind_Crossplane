@@ -1,1 +1,0 @@
-docker exec -it kind_container /bin/bash -c "ansible-playbook playbook.yaml"

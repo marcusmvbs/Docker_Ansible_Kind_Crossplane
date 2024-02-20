@@ -4,62 +4,44 @@ LABEL maintainer="Marcus Barros da Silva <marcus.mvbs@gmail.com>"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update package index and install required packages
 RUN echo "Updating package index..." && \
     apt-get update && \ 
+    echo "Installing required tools..." && \
     apt-get install -y --no-install-recommends \
-    gnupg curl wget ca-certificates apt-utils \
+    gnupg curl wget ca-certificates apt-utils apt-transport-https \
     openssh-server \
-    python3 python3-pip \
+    python3 python3-pip python3-apt \
     ansible \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* && \
+    echo "Installing .NET SDK packages..." && \
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb
 
-# Upgrade pip and install ansible via pip
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    ansible --version
-
-# --- Ansible should cover from this part --- #
-# Install Docker
-RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
-    sh get-docker.sh && \
-    rm get-docker.sh && \
-    docker --version
-
-# Install Kind
-ENV KIND_VERSION=v0.12.0
-RUN curl -Lo /usr/local/bin/kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64" && \
-    chmod +x /usr/local/bin/kind && \
-    kind version
-
-# Install kubectl
-ENV KUBECTL_VERSION=v1.24.1
-RUN wget -O /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
-    chmod +x /usr/local/bin/kubectl && \
-    kubectl version --client --short
-
-# Install Helm
-ENV HELM_VERSION=v3.7.0
-RUN wget -q "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" -O /tmp/helm.tar.gz && \
-    tar -C /tmp -zxvf /tmp/helm.tar.gz && \
-    mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
-    rm -rf /tmp/linux-amd64 /tmp/helm.tar.gz && \
-    helm version --short
-
-# Configure SSH server
+# Configure SSH
 RUN echo 'root:password' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     ssh-keygen -A && \
     chmod 700 /etc/ssh
 #    chmod 600 /etc/ssh/*_key
 
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    ansible-galaxy collection install community.general
+
+# Install Docker
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
+    sh get-docker.sh && \
+    rm get-docker.sh
+
 # Storing Kind cluster config
 RUN mkdir -p /kind-config
 COPY kind-config.yaml /kind-config/
 
 # Storing Ansible config
-COPY playbook.yaml /kind-config/
+RUN mkdir -p /ansible
+COPY playbook.yaml /ansible/
+COPY inventory.ini /ansible/
 
-WORKDIR /kind-config
+WORKDIR /ansible
 
 # Set up an entrypoint script to initialize Kind cluster
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

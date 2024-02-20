@@ -14,5 +14,5 @@ spec:
     app: my-app
   ports:
     - protocol: TCP
-      port: 8080 # Expose 8080 on the cluster
+      port: 443 # Expose 8080 on the cluster
       targetPort: 80 # Traffic forwarded to this port on pods
