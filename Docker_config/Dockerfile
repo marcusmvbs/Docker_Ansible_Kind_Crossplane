@@ -53,7 +53,7 @@ RUN echo 'root:password' | chpasswd && \
 
 # Storing Kind cluster config
 RUN mkdir -p /kind-config
-COPY kind-config.yaml /kind-config
+COPY kind-config.yaml /kind-config/
 
 # Set up an entrypoint script to initialize Kind cluster
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
