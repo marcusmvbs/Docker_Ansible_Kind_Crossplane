@@ -2,5 +2,5 @@
 
 docker stop kind_container
 docker rm kind_container
-#docker image prune --all --force
-#docker system prune -f
+docker image prune --all --force
+docker system prune -f

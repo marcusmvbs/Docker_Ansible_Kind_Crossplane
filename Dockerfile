@@ -12,10 +12,11 @@ RUN echo "Updating package index..." && \
     openssh-server \
     python3 python3-pip python3-apt \
     ansible \
-    && rm -rf /var/lib/apt/lists/* && \
-    echo "Installing .NET SDK packages..." && \
-    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-    && dpkg -i packages-microsoft-prod.deb
+    && rm -rf /var/lib/apt/lists/*
+    # echo "Installing .NET SDK packages..." && \
+    # wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+    # && dpkg -i packages-microsoft-prod.deb \
+    # && apt-get install -y dotnet-sdk
 
 # Configure SSH
 RUN echo 'root:password' | chpasswd && \

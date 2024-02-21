@@ -36,7 +36,8 @@
         mode: '0755'
 
     - name: Create Kind cluster
-      command: kind create cluster --name my-cluster
+      command: kind create cluster
+    # --name my-cluster
 
     # - name: Wait for Kind cluster to be ready
     #   wait_for:
