@@ -7,7 +7,7 @@ docker run -d --network=host -v /var/run/docker.sock:/var/run/docker.sock --name
 # Display container information
 docker ps -a
 # Execute Ansible playbook inside the Docker container
-docker exec -it kind_container /bin/bash -c "ansible-playbook -i inventory.ini playbook.yaml"
+docker exec -it kind_container /bin/bash -c "ansible-playbook -i inventory.ini ../../ansible/playbook.yaml"
 
 # kind delete cluster
 # exit
