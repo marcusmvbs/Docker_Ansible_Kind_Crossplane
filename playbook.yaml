@@ -36,7 +36,7 @@
         mode: '0755'
 
     - name: Create Kind cluster
-      command: kind create cluster
+      command: kind create cluster --config=../kind-config/kind-config.yaml
     # --name my-cluster
 
     # - name: Wait for Kind cluster to be ready
