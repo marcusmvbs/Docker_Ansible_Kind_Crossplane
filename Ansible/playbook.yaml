@@ -1,8 +1,10 @@
 ---
-- name: Update packages, install Kind, kubectl, helm, create kind cluster
+- name: Install needed packages / Helm repo tasks / Kind cluster creation and configuration
   hosts: localhost
   become: yes # exec as root
   tasks:
+
+    # Install needed packages tasks
     - name: Update Container Packages 
       apt:
         update_cache: yes
@@ -35,8 +37,30 @@
         dest: "/usr/local/bin/helm"
         mode: '0755'
 
-    - name: Create Kind cluster
-      command: kind create cluster --name dak-cluster --config=../kind-config/kind-config.yaml
+    # Helm repo tasks
+    - name: Nginx-ingress controller Helm Repo
+      community.kubernetes.helm_repository:
+        name: ingress-nginx
+        repo_url: https://kubernetes.github.io/ingress-nginx
+    
+    # - name: Redis/SQL/nginx-server Helm Repo
+    #   ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-    - name: Apply Manifest on cluster
-      command: kubectl apply -f ../kind-config/manifest.yaml
+    # - name: Kasten Helm Repo
+    #   ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
+
+    # - name: Fluent Bit Helm Repo
+    #   ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
+
+    # - name: Prometheus Helm Repo
+    #   ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+    - name: Search Helm Charts
+      ansible.builtin.command: helm search repo
+
+    - name: Update Helm Repositories
+      ansible.builtin.command: helm repo update
+
+    # Kind cluster creation and configuration tasks
+    - name: Create Kind cluster
+      command: kind create cluster --config=../kind-config/kind-config.yaml

@@ -1,0 +1,20 @@
+ingress:
+  enabled: true
+  namespace: nginxingress-ns
+  
+  # configmap:
+  #   name: configmap
+  # secrets:
+  #   ingress-password-secret: ingress-password-secret
+  
+  service:
+    annotations: {}
+    name: ingress-svc
+    ports:
+      - port1: 80
+      - port2: 443
+
+  deployment:
+    name: ingress-deploy
+    replicas: 2
+    image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:latest

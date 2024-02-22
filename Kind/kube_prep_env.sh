@@ -28,7 +28,30 @@ echo ""
 # $scp -i C:/Users/marcu/.ssh/authorized_keys root@localhost:/root/.kube/config C:/Users/marcu/.kube/config
 # $ssh -i C:/Users/marcu/.ssh/authorized_keys root@localhost
 
+## Namespace ##
+# $kubectl api-resources --namespaced=true && false 
+echo "nginxingress-ns database-ns monitoring-ns argocd-ns cache-ns kafka-ns" | xargs -n1 kubectl create namespace
+# for ns in webserver-ns nginxingress-ns database-ns monitoring-ns argocd-ns cache-ns kafka-ns; do
+#     kubectl create namespace $ns
+# done
+echo ""
+
+## Helm packages installation - CURRENT TASK
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace nginxingress-ns
+# helm install {{ POSTGRES_RELEASE }} stable/postgresql --namespace database-ns
+# helm install {{ FLUENT_BIT_RELEASE }} stable/fluent-bit
+# helm install {{ REDIS_RELEASE }} stable/redis
+# helm install {{ PROMETHEUS_RELEASE }} stable/prometheus
+# helm install my-kasten kasten/k10
+echo ""
+
+## Argocd Install and Apply Manifest File ##
+kubectl apply -n argocd-ns -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+#kubectl apply -f ../kind-config/application.yaml
+echo ""
+
 ## Pods ##
-kubectl apply -f /kind-config/manifest.yaml
-kubectl get pods 
-# $kubectl logs pod-name
+# kubectl get pods -n nginxingress-ns
+kubectl get pods -A
+# kubectl logs pod-name
+# kubectl delete pod pod-name

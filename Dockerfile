@@ -26,7 +26,7 @@ RUN echo 'root:password' | chpasswd && \
 #    chmod 600 /etc/ssh/*_key
 
 RUN pip3 install --no-cache-dir --upgrade pip && \
-    ansible-galaxy collection install community.general
+    ansible-galaxy collection install community.general community.kubernetes
 
 # Install Docker
 RUN curl -fsSL https://get.docker.com -o get-docker.sh && \

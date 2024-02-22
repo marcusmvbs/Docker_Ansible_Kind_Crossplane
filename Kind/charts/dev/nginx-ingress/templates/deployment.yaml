@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ingress.deployment.name }}
+  namespace: {{ .Values.ingress.namespace }}
+spec:
+  replicas: {{ .Values.ingress.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: ingress-controller
+  template:
+    metadata:
+      labels:
+        app: ingress-controller
+    spec:
+      containers:
+        - name: ingress-controller
+          image: {{ .Values.ingress.deployment.image }}
+          ports:
+            - containerPort: {{ .Values.ingress.service.ports.port1 }}
+            - containerPort: {{ .Values.ingress.service.ports.port2 }}
