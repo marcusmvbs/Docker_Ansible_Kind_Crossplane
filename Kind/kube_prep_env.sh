@@ -36,7 +36,7 @@ echo "nginxingress-ns database-ns monitoring-ns argocd-ns cache-ns kafka-ns" | x
 # done
 echo ""
 
-## Helm packages installation - CURRENT TASK
+## Helm packages installation - ###### CURRENT TASK #######
 helm install nginx-ingress ingress-nginx/ingress-nginx --namespace nginxingress-ns
 # helm install {{ POSTGRES_RELEASE }} stable/postgresql --namespace database-ns
 # helm install {{ FLUENT_BIT_RELEASE }} stable/fluent-bit
