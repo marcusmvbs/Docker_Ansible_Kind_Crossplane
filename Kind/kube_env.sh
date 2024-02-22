@@ -5,8 +5,6 @@
 ## Basic commands ##
 kubectl get svc
 echo "" # For better visualization on terminal
-kubectl get nodes
-echo ""
 
 ## Labeling worker nodes ##
 kubectl label node kind-worker node-role.kubernetes.io/worker=worker
