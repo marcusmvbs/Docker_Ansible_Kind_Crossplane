@@ -12,7 +12,7 @@ kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
 echo ""
 
 kubectl get nodes -o wide
-# kubectl describe node kind-worker2 | more
+# kubectl describe node kind-worker | more
 # kubectl describe node kind-worker2 | more
 echo ""
 
@@ -23,6 +23,12 @@ echo ""
 # kubectl get pods --all-namespaces -o wide | grep -i kube-proxy
 
 ## External access ##
-ls -l ~/.kube/config
+#ls -l ~/.kube/config
 # $exit
-# $scp -i C:/Users/marcu/.ssh/authorized_keys root@localhost:/root/.kube/config
+# $scp -i C:/Users/marcu/.ssh/authorized_keys root@localhost:/root/.kube/config C:/Users/marcu/.kube/config
+# $ssh -i C:/Users/marcu/.ssh/authorized_keys root@localhost
+
+## Pods ##
+kubectl apply -f /kind-config/manifest.yaml
+kubectl get pods 
+# $kubectl logs pod-name

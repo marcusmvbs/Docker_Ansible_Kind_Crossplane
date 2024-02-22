@@ -36,21 +36,7 @@
         mode: '0755'
 
     - name: Create Kind cluster
-      command: kind create cluster --config=../kind-config/kind-config.yaml
-    # --name my-cluster
+      command: kind create cluster --name dak-cluster --config=../kind-config/kind-config.yaml
 
-    # - name: Wait for Kind cluster to be ready
-    #   wait_for:
-    #     host: localhost
-    #     port: 443
-    #     delay: 10
-    #     timeout: 180
-
-#- name: Apply cluster config
-#  hosts: localhost
-#  tasks:
-#    - name: Apply .NET server manifests
-#      kubectl:
-#        src: /path/to/.net-server-manifests
-#        kubeconfig: /root/.kube/config
-#        state: present
+    - name: Apply Manifest on cluster
+      command: kubectl apply -f ../kind-config/manifest.yaml

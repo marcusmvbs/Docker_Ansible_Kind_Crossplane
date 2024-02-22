@@ -33,19 +33,14 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     sh get-docker.sh && \
     rm get-docker.sh
 
-RUN mkdir -p /ansible /kind-config/kube_script
+RUN mkdir -p /ansible /kind-config
 
-# Storing Ansible config
-COPY Ansible/playbook.yaml /ansible/
-COPY Ansible/inventory.ini /ansible/
+# Storing Ansible, Kind, K8s config files
+COPY Ansible/ /ansible/
+COPY Kind/ /kind-config/
+RUN chmod +x /kind-config/kube_prep_env.sh
 
-# Storing Kind cluster config
-COPY Kind/kind-config.yaml /kind-config/
-
-# Kubectl editing environment
-COPY Kind/kube_env.sh /kind-config/kube_script/
-
-WORKDIR /kind-config/kube_script/
+WORKDIR /kind-config/
 
 # Set up an entrypoint script to initialize Kind cluster
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
