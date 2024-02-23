@@ -5,7 +5,7 @@
   tasks:
 
     # Install needed packages tasks
-    - name: Update Container Packages 
+    - name: Update Container Packages
       apt:
         update_cache: yes
 
@@ -38,22 +38,23 @@
         mode: '0755'
 
     # Helm repo tasks
-    - name: Nginx-ingress controller Helm Repo
-      community.kubernetes.helm_repository:
-        name: ingress-nginx
-        repo_url: https://kubernetes.github.io/ingress-nginx
-    
-    # - name: Redis/SQL/nginx-server Helm Repo
-    #   ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
+    - name: Ingress-Nginx Helm Repo
+      ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
-    # - name: Kasten Helm Repo
-    #   ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
+    - name: Redis/SQL/Nginx Helm Repo
+      ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-    # - name: Fluent Bit Helm Repo
-    #   ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
+    - name: Prometheus Helm Repo
+      ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
-    # - name: Prometheus Helm Repo
-    #   ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    - name: Fluent Bit Helm Repo
+      ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
+
+    - name: Kasten Helm Repo
+      ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
+
+    - name: Strimzi Helm Repo
+      ansible.builtin.command: helm repo add strimzi https://strimzi.io/charts/
 
     - name: Search Helm Charts
       ansible.builtin.command: helm search repo
@@ -61,6 +62,59 @@
     - name: Update Helm Repositories
       ansible.builtin.command: helm repo update
 
-    # Kind cluster creation and configuration tasks
-    - name: Create Kind cluster
-      command: kind create cluster --config=../kind-config/kind-config.yaml
+    # Kind cluster creation and error handling
+    - name: Check if Kind cluster already exists
+      ansible.builtin.shell: kind get clusters
+      register: kind_cluster_list
+      changed_when: false
+      ignore_errors: true
+
+    - name: Create Kind cluster if it doesn't already exist
+      ansible.builtin.command: kind create cluster --config=../kind-config/kind-config.yaml
+      when: not kind_cluster_exists
+
+    - name: Print Kind cluster creation result
+      ansible.builtin.debug:
+        msg: "Kind cluster {{ 'created successfully' if not kind_cluster_exists else 'already exists' }}"
+
+    - name: DEBUG
+      ansible.builtin.debug:
+        msg: "Testing kubectl via ansible.shell..."
+
+    # Create namespaces on cluster environment
+    - name: Create namespaces on kind-worker Node
+      ansible.builtin.shell: kubectl create namespace {{ item }}
+      loop:
+        - nginxingress-ns
+        - webserver-ns
+        - database-ns
+        - logs-ns
+        - cache-ns
+        - kafka-ns
+        - monitoring-ns
+        - kasten-ns
+      # delegate_to: worker
+
+    # Helm Install
+    - name: Install Ingress-Nginx using Helm
+      ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
+
+    - name: Install Nginx  "  "
+      ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
+
+    - name: Install PostgreSQL  "  "
+      ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
+    - name: Install Prometheus  "  "
+      ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
+    - name: Install Fluent Bit  "  "
+      ansible.builtin.command: helm install my-fluent-bit fluent/fluent-bit --namespace log-ns
+    - name: Install Redis  "  "
+      ansible.builtin.command: helm install my-redis bitnami/redis --namespace cache-ns
+    - name: Install Kasten  "  "
+      ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
+    - name: Install Strimzi Kafka Operator  "  "
+      ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
+
+    # Cluster configuration
+    - name: Cluster configuration
+      shell: ../kind-config/gitops_prep_env.sh

@@ -38,7 +38,7 @@ RUN mkdir -p /ansible /kind-config
 # Storing Ansible, Kind, K8s config files
 COPY Ansible/ /ansible/
 COPY Kind/ /kind-config/
-RUN chmod +x /kind-config/kube_prep_env.sh
+RUN chmod +x /kind-config/gitops_prep_env.sh
 
 WORKDIR /kind-config/
 

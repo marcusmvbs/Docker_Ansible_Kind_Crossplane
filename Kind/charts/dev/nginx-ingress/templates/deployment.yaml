@@ -9,7 +9,7 @@ spec:
     matchLabels:
       app: ingress-controller
   template:
-    metadata:
+    metadata: 
       labels:
         app: ingress-controller
     spec:

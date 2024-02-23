@@ -1,0 +1,16 @@
+nginx:
+  ingress:
+    enabled: true
+    namespace: webserver-ns
+  
+  service:
+    annotations: {}
+    name: nginx-svc
+    ports:
+      - port1: 80
+      - port2: 443
+
+  deployment:
+    name: nginx-deployment
+    replicas: 2
+    image: bitnami/nginx

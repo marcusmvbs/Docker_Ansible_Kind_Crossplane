@@ -9,12 +9,12 @@ ingress:
   
   service:
     annotations: {}
-    name: ingress-svc
+    name: ingress-nginx-svc
     ports:
       - port1: 80
       - port2: 443
 
   deployment:
-    name: ingress-deploy
-    replicas: 2
-    image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:latest
+    name: ingress-nginx-deployment
+    replicas: 1
+    image: k8s.gcr.io/ingress-nginx/controller:v1.0.0
