@@ -2,14 +2,11 @@
 $containerName = "kind_container"
 
 # Docker Variables
-$dockerExecDelCommand   = "docker exec -it $containerName sh -c '$clusterDeleteCommand'"
+$dockerExecDelCommand   = "docker exec -it $containerName sh -c 'kind delete cluster'"
 $dockerStopCommand   = "docker stop $containerName"
 $dockerRemoveCommand = "docker rm $containerName"
 $dockerImagePrune    = "docker image prune --all --force"
 $dockerSystemPrune    = "docker system prune -f"
-
-# Cluster Delete
-$clusterDeleteCommand = "kind delete cluster"
 
 ## RUN commands ##
 

@@ -4,9 +4,9 @@
 
 ## Basic commands ##
 # kubectl get svc
-# Check if cluster is fully configured via ansible
-ansible-playbook -i ../ansible/inventory.ini ../ansible/playbook.yaml
-echo "" # For better visualization on terminal
+
+# # Check if cluster is fully configured via ansible
+# ansible-playbook -i ../ansible/inventory.ini ../ansible/playbook.yaml
 
 
 ## Labeling worker nodes ##
@@ -32,18 +32,12 @@ echo ""
 
 ## Namespace ##
 # kubectl api-resources --namespaced=true && false 
-# echo "nginxingress-ns database-ns monitoring-ns argocd-ns cache-ns kafka-ns" | xargs -n1 kubectl create namespace
-# for ns in webserver-ns nginxingress-ns database-ns monitoring-ns argocd-ns cache-ns kafka-ns; do
-#     kubectl create namespace $ns
-# done
 kubectl create namespace argocd-ns
-kubectl get ns
-echo ""
+# kubectl get ns
 
 ## Argocd Install and Apply Manifest File ##
 kubectl apply -n argocd-ns -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl apply -f ../kind-config/application.yaml
-echo ""
 
 ## Pods ##
 # kubectl get pods -n nginxingress-ns

@@ -7,16 +7,13 @@ $playbook_exec =  "ansible-playbook -i ../ansible/inventory.ini ../ansible/playb
 
 # Docker Variables
 $dockerBuildCommand  = "docker build -t $imageName ."
-$dockerExecDelCommand   = "docker exec -it $containerName sh -c '$clusterDeleteCommand'"
+$dockerExecDelCommand   = "docker exec -it $containerName sh -c 'kind delete cluster'"
 $dockerRunCommand    = "docker run -d $network_type -v $socket_volume --name $containerName $imageName"
 $dockerStopCommand   = "docker stop $containerName"
 $dockerRemoveCommand = "docker rm $containerName"
 
 # Ansible Variables
 $ansibleplaybook = "docker exec -it $containerName sh -c '$playbook_exec'"
-
-# Cluster Delete Variables
-$clusterDeleteCommand = "kind delete cluster"
 
 ## RUN commands ##
 

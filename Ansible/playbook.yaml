@@ -87,26 +87,33 @@
         - kasten-ns
 
     # Helm Install
-    - name: DEBUG
-      ansible.builtin.debug:
-        msg: "Testing helm installation..."
-    # - name: Install Ingress-Nginx using Helm
-    #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
-    - name: Install Nginx  "  "
+    - name: Helm installing nginx...
       ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
-    - name: Install PostgreSQL  "  "
+
+    - name: Helm installing postgreSQL...
       ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
-    - name: Install Prometheus  "  "
-      ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
-    - name: Install Fluent Bit  "  "
-      ansible.builtin.command: helm install my-fluent-bit fluent/fluent-bit --namespace log-ns
-    - name: Install Redis  "  "
-      ansible.builtin.command: helm install my-redis bitnami/redis --namespace cache-ns
-    - name: Install Kasten  "  "
-      ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
-    - name: Install Strimzi Kafka Operator  "  "
-      ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
+
+    # # - name: Install Ingress-Nginx using Helm ERROR
+    # #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
+
+    # - name: Helm installing Prometheus...
+    #   ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
+
+    # - name: Helm installing Fluent Bit...
+    #   ansible.builtin.command: helm install my-fluent-bit fluent/fluent-bit --namespace logs-ns
+
+    # - name: Helm installing Redis...
+    #   ansible.builtin.command: helm install my-redis bitnami/redis --namespace cache-ns
+
+    # # - name: Helm installing Kasten... ERROR
+    # #   ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
+
+    # - name: Helm installing Strimzi Kafka Operator...
+    #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
 
     # Cluster configuration
+    - name: DEBUG
+      ansible.builtin.debug:
+        msg: "Testing cluster config..."
     - name: Cluster configuration
       shell: ../kind-config/gitops_prep_env.sh
