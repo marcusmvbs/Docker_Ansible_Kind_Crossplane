@@ -1,7 +1,5 @@
 #!/bin/bash
 
-## $./kube_env.sh ##
-
 ## Basic commands ##
 # kubectl get svc
 
@@ -11,9 +9,8 @@
 
 ## Labeling worker nodes ##
 kubectl label node kind-worker node-role.kubernetes.io/worker=worker
-#kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
-kubectl get nodes -o wide
-echo ""
+kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
+#kubectl get nodes -o wide
 
 # kubectl describe node kind-worker | more
 # kubectl describe node kind-worker2 | more 
@@ -41,6 +38,6 @@ kubectl apply -f ../kind-config/application.yaml
 
 ## Pods ##
 # kubectl get pods -n nginxingress-ns
-kubectl get pods -A
+# kubectl get pods -A
 # kubectl logs pod-name
 # kubectl delete pod pod-name

@@ -3,7 +3,6 @@
   hosts: localhost
   become: yes # exec as root
   tasks:
-
     # Install needed packages tasks
     - name: Update Container Packages
       apt:
@@ -63,18 +62,17 @@
       ansible.builtin.command: helm repo update
 
     # Kind cluster creation and error handling
+    # - name: Check if Kind cluster exists
+    #   ansible.builtin.command: kind get clusters | grep kind
+    #   register: kind_cluster_check
+    #   ignore_errors: yes
+
     - name: Create Kind cluster
       ansible.builtin.command: kind create cluster --config=../kind-config/kind-config.yaml
-    #   ignore_errors: true
-    #   register: kind_cluster_creation_result
-    #   failed_when: "'Cluster already exist' not in kind_cluster_creation_result.stderr"
-
-    # - name: Print Kind cluster creation result
-    #   ansible.builtin.debug:
-    #     msg: "Kind cluster {{ 'created successfully' if not kind_cluster_creation_result.failed else 'already exists' }}"
+      # when: kind_cluster_check.rc != 0
 
     # Create namespaces on cluster environment
-    - name: Create namespaces on kind-worker Node
+    - name: Create namespaces
       ansible.builtin.command: kubectl create namespace {{ item }}
       loop:
         - nginxingress-ns
@@ -85,6 +83,12 @@
         - kafka-ns
         - monitoring-ns
         - kasten-ns
+    #   register: namespace_check
+    #   ignore_errors: yes
+
+    # - name: Create namespaces on kind-worker node
+    #   ansible.builtin.command: kubectl create namespace {{ item }}
+    #   loop: "{{ namespace_check.results | selectattr('failed', 'defined') | map(attribute='item') | list }}"
 
     # Helm Install
     - name: Helm installing nginx...
@@ -112,8 +116,9 @@
     #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
 
     # Cluster configuration
-    - name: DEBUG
-      ansible.builtin.debug:
-        msg: "Testing cluster config..."
-    - name: Cluster configuration
+    - name: Installing cluster configuration...
       shell: ../kind-config/gitops_prep_env.sh
+    
+    - name: Cluster configuration completed
+      ansible.builtin.debug:
+        msg: "Kubernetes Kind Cluster fully configured. Gitops Running!"
