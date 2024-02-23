@@ -1,4 +1,3 @@
-# Docker-Desktop Windows version 25.0.3 - Default configuration | $powershell.exe -File docker_build.ps1
 # Common Variables
 $imageName     = "kind_docker_image"
 $containerName = "kind_container"
@@ -8,22 +7,33 @@ $playbook_exec =  "ansible-playbook -i ../ansible/inventory.ini ../ansible/playb
 
 # Docker Variables
 $dockerBuildCommand  = "docker build -t $imageName ."
+$dockerExecDelCommand   = "docker exec -it $containerName sh -c '$clusterDeleteCommand'"
 $dockerRunCommand    = "docker run -d $network_type -v $socket_volume --name $containerName $imageName"
-$dockerContainerInfo = "docker ps -a"
+$dockerStopCommand   = "docker stop $containerName"
+$dockerRemoveCommand = "docker rm $containerName"
 
 # Ansible Variables
 $ansibleplaybook = "docker exec -it $containerName sh -c '$playbook_exec'"
 
+# Cluster Delete Variables
+$clusterDeleteCommand = "kind delete cluster"
+
 ## RUN commands ##
+
+# Execute Docker container to delete kind cluster
+Invoke-Expression -Command $dockerExecDelCommand
+
+# Stop the Docker container
+Invoke-Expression -Command $dockerStopCommand
+
+# Remove the Docker container
+Invoke-Expression -Command $dockerRemoveCommand
 
 # Rebuild the Docker container
 Invoke-Expression -Command $dockerBuildCommand
 
 # Run Docker container
 Invoke-Expression -Command $dockerRunCommand
-
-# Run Docker container
-Invoke-Expression -Command $dockerContainerInfo
 
 # Execute Ansible tasks
 Invoke-Expression -Command $ansibleplaybook

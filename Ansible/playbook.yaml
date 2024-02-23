@@ -63,27 +63,19 @@
       ansible.builtin.command: helm repo update
 
     # Kind cluster creation and error handling
-    - name: Check if Kind cluster already exists
-      ansible.builtin.shell: kind get clusters
-      register: kind_cluster_list
-      changed_when: false
-      ignore_errors: true
-
-    - name: Create Kind cluster if it doesn't already exist
+    - name: Create Kind cluster
       ansible.builtin.command: kind create cluster --config=../kind-config/kind-config.yaml
-      when: not kind_cluster_exists
+    #   ignore_errors: true
+    #   register: kind_cluster_creation_result
+    #   failed_when: "'Cluster already exist' not in kind_cluster_creation_result.stderr"
 
-    - name: Print Kind cluster creation result
-      ansible.builtin.debug:
-        msg: "Kind cluster {{ 'created successfully' if not kind_cluster_exists else 'already exists' }}"
-
-    - name: DEBUG
-      ansible.builtin.debug:
-        msg: "Testing kubectl via ansible.shell..."
+    # - name: Print Kind cluster creation result
+    #   ansible.builtin.debug:
+    #     msg: "Kind cluster {{ 'created successfully' if not kind_cluster_creation_result.failed else 'already exists' }}"
 
     # Create namespaces on cluster environment
     - name: Create namespaces on kind-worker Node
-      ansible.builtin.shell: kubectl create namespace {{ item }}
+      ansible.builtin.command: kubectl create namespace {{ item }}
       loop:
         - nginxingress-ns
         - webserver-ns
@@ -93,15 +85,15 @@
         - kafka-ns
         - monitoring-ns
         - kasten-ns
-      # delegate_to: worker
 
     # Helm Install
-    - name: Install Ingress-Nginx using Helm
-      ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
-
+    - name: DEBUG
+      ansible.builtin.debug:
+        msg: "Testing helm installation..."
+    # - name: Install Ingress-Nginx using Helm
+    #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
     - name: Install Nginx  "  "
       ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
-
     - name: Install PostgreSQL  "  "
       ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
     - name: Install Prometheus  "  "
