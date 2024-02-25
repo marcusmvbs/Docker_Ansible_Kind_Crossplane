@@ -3,7 +3,6 @@
   hosts: localhost
   become: yes # exec as root
   tasks:
-    # Install needed packages tasks
     - name: Update Container Packages
       apt:
         update_cache: yes
@@ -37,16 +36,16 @@
         mode: '0755'
 
     # Helm repo tasks
-    # - name: Ingress-Nginx Helm Repo
-    #   ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-
-    - name: Redis/SQL/Nginx Helm Repo
-      ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
-
     - name: Crossplane Helm Repo
       ansible.builtin.command: helm repo add crossplane-stable https://charts.crossplane.io/stable
 
-    # - name: Prometheus Helm Repo
+    # - name: Ingress-Nginx Helm Repo
+    #   ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+    # - name: Redis/SQL/Nginx Helm Repo
+    #   ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
+
+        # - name: Prometheus Helm Repo
     #   ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
     # - name: Fluent Bit Helm Repo
@@ -71,25 +70,20 @@
     - name: Create namespaces
       ansible.builtin.command: kubectl create namespace {{ item }}
       loop:
-        - webserver-ns
         - crossplane-ns
 
-    # - name: Create namespaces on kind-worker node
-    #   ansible.builtin.command: kubectl create namespace {{ item }}
-    #   loop: "{{ namespace_check.results | selectattr('failed', 'defined') | map(attribute='item') | list }}"
-
     # Helm Installation
+    - name: Helm installing crossplane...
+      ansible.builtin.command: helm install my-crossplane crossplane-stable/crossplane --namespace crossplane-ns
+
     # - name: Helm installing nginx...
     #   ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
 
     # - name: Helm installing postgreSQL...
     #   ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
 
-    - name: Helm installing crossplane...
-      ansible.builtin.command: helm install my-crossplane crossplane-stable/crossplane --namespace crossplane-ns
-
-    # # - name: Install Ingress-Nginx using Helm ERROR
-    # #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --dry-run --debug --namespace nginxingress-ns
+    # - name: Install Ingress-Nginx using Helm ERROR
+    #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --dry-run --debug --namespace nginxingress-ns
 
     # - name: Helm installing Prometheus...
     #   ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
@@ -100,8 +94,8 @@
     # - name: Helm installing Redis...
     #   ansible.builtin.command: helm install my-redis bitnami/redis --namespace cache-ns
 
-    # # - name: Helm installing Kasten... ERROR
-    # #   ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
+    # - name: Helm installing Kasten... ERROR
+    #   ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
 
     # - name: Helm installing Strimzi Kafka Operator...
     #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
@@ -109,7 +103,3 @@
   #  Cluster configuration
     - name: Installing cluster configuration...
       shell: ../kind-config/add_aws_bucket.sh
-    
-    # - name: Cluster configuration completed
-    #   ansible.builtin.debug:
-    #     msg: "Kubernetes Kind Cluster fully configured. Gitops Running!"

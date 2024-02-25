@@ -31,9 +31,10 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
 
 RUN mkdir -p /ansible /kind-config
 
-# Storing Ansible, Kind, K8s config files
+# Storing Ansible, Kind, Crossplane-aws, credentials config files
 COPY Ansible/ /ansible/
 COPY Kind/ /kind-config/
+COPY .creds.txt /kind-config/charts/dev/aws/
 RUN chmod +x /kind-config/add_aws_bucket.sh
 
 WORKDIR /kind-config/
