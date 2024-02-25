@@ -2,7 +2,7 @@
 $containerName = "kind_container"
 
 # Docker Variables
-$KubectlDelBucketCmd = "docker exec -it $containerName sh -c 'kubectl delete bucket dak-bucket'"
+$KubectlDelBucketCmd = "docker exec -it $containerName sh -c 'kubectl delete bucket dak-bucket-vini'"
 $KindDelCmd          = "docker exec -it $containerName sh -c 'kind delete cluster'"
 $DockerStopCmd       = "docker stop $containerName"
 $DockerRemoveCmd     = "docker rm $containerName"

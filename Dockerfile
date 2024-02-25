@@ -14,13 +14,6 @@ RUN echo "Updating package index..." && \
     ansible \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure SSH
-RUN echo 'root:password' | chpasswd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-    ssh-keygen -A && \
-    chmod 700 /etc/ssh
-#    chmod 600 /etc/ssh/*_key
-
 RUN pip3 install --no-cache-dir --upgrade pip && \
     ansible-galaxy collection install community.general community.kubernetes
 

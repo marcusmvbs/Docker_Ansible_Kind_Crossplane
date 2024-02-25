@@ -87,7 +87,3 @@
 
     # - name: Helm installing Strimzi Kafka Operator...
     #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
-
-  #  Cluster configuration
-    - name: Crossplane, AWS Provider Config and S3 Resource Provisioning...
-      shell: ../kind-config/add_aws_bucket.sh
