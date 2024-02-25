@@ -39,20 +39,14 @@
     - name: Crossplane Helm Repo
       ansible.builtin.command: helm repo add crossplane-stable https://charts.crossplane.io/stable
 
-    # - name: Ingress-Nginx Helm Repo
-    #   ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-
     # - name: Redis/SQL/Nginx Helm Repo
     #   ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-        # - name: Prometheus Helm Repo
+    # - name: Prometheus Helm Repo
     #   ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
     # - name: Fluent Bit Helm Repo
     #   ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
-
-    # - name: Kasten Helm Repo
-    #   ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
 
     # - name: Strimzi Helm Repo
     #   ansible.builtin.command: helm repo add strimzi https://strimzi.io/charts/
@@ -82,9 +76,6 @@
     # - name: Helm installing postgreSQL...
     #   ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
 
-    # - name: Install Ingress-Nginx using Helm ERROR
-    #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --dry-run --debug --namespace nginxingress-ns
-
     # - name: Helm installing Prometheus...
     #   ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
 
@@ -93,9 +84,6 @@
 
     # - name: Helm installing Redis...
     #   ansible.builtin.command: helm install my-redis bitnami/redis --namespace cache-ns
-
-    # - name: Helm installing Kasten... ERROR
-    #   ansible.builtin.command: helm install my-kasten kasten/k10 --namespace kasten-ns
 
     # - name: Helm installing Strimzi Kafka Operator...
     #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
