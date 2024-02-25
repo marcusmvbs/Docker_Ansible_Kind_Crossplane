@@ -13,10 +13,6 @@ RUN echo "Updating package index..." && \
     python3 python3-pip python3-apt \
     ansible \
     && rm -rf /var/lib/apt/lists/*
-    # echo "Installing .NET SDK packages..." && \
-    # wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-    # && dpkg -i packages-microsoft-prod.deb \
-    # && apt-get install -y dotnet-sdk
 
 # Configure SSH
 RUN echo 'root:password' | chpasswd && \
@@ -38,7 +34,7 @@ RUN mkdir -p /ansible /kind-config
 # Storing Ansible, Kind, K8s config files
 COPY Ansible/ /ansible/
 COPY Kind/ /kind-config/
-RUN chmod +x /kind-config/gitops_prep_env.sh
+RUN chmod +x /kind-config/add_aws_bucket.sh
 
 WORKDIR /kind-config/
 

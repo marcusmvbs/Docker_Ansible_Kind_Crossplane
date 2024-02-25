@@ -1,0 +1,75 @@
+#!/bin/bash
+
+## Labeling worker nodes ##
+kubectl label node kind-worker node-role.kubernetes.io/worker=worker
+kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
+
+## Basic Commands ##
+# kubectl get nodes -o wide
+# kubectl describe node kind-worker | more
+# kubectl describe node kind-worker2 | more 
+# echo ""
+
+## Control plane ##
+# kubectl get pods --all-namespaces -o wide | grep -i apiserver
+## Control plane & worker nodes ##
+# kubectl get pods --all-namespaces -o wide | grep -i kube-proxy
+
+## External access ##
+# ls -l ~/.kube/config
+# $exit
+# $scp -i C:/Users/marcu/.ssh/authorized_keys root@localhost:/root/.kube/config C:/Users/marcu/.kube/config
+# $ssh -i C:/Users/marcu/.ssh/authorized_keys root@localhost
+
+## Argocd and Manifest Application ##
+# kubectl create namespace argocd-ns
+# kubectl apply -n argocd-ns -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# kubectl apply -f ../kind-config/application.yaml
+
+## Namespace ##
+# kubectl api-resources --namespaced=true && false 
+# kubectl get ns
+
+## Pods ##
+# kubectl get pods -n nginxingress-ns
+# kubectl get pods -A -l environment=staging
+# kubectl -n webserver-ns exec -it nginx-pod-name -- sh/printenv/hostname
+# $ps -ef||$cat /etc/resolv.conf||
+# kubectl logs pod-name
+# kubectl delete pod pod-name
+
+## Deployments & ReplicaSets ##
+# kubectl -n webserver-ns get deployments
+# kubectl -n webserver-ns get replicasets
+# kubectl -n webserver-ns describe replicaset replicaset-name | more
+# kubectl delete -f deployment.yaml
+
+## CRDs ##
+# kubectl get crd
+sleep 90
+
+## Provider Config - AWS ##
+# kubectl api-resources | grep crossplane
+kubectl apply -f ../kind-config/charts/dev/aws/provider.yaml
+# kubectl get providers
+# kubectl get crds | grep -i S3
+sleep 170
+
+## Secrets ##
+# aws account credentials copy - credentials.txt
+kubectl create secret generic aws-creds -n crossplane-ns --from-file=creds=../kind-config/charts/dev/aws/credentials.txt
+# kubectl get secret -n crossplane-ns
+# kubectl describe secret aws-creds -n crossplane-ns
+
+# Secret + Provider = ProviderConfig
+kubectl create -f ../kind-config/charts/dev/aws/providerconfig.yaml
+sleep 10
+
+## Provider resources - It takes up to 5 minutes to create S3 bucket ##
+kubectl apply -f ../kind-config/charts/dev/aws/s3.yaml
+# kubectl get crds | grep -i s3
+# kubectl get bucket
+# kubectl describe bucket
+# kubectl delete bucket kind-crossplane-aws-bucket-vini
+
+# Execution time = script 260s, docker build 240s, ansible tasks 215s, bucket creation 40s == 655s

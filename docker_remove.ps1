@@ -2,25 +2,22 @@
 $containerName = "kind_container"
 
 # Docker Variables
-$dockerExecDelCommand   = "docker exec -it $containerName sh -c 'kind delete cluster'"
-$dockerStopCommand   = "docker stop $containerName"
-$dockerRemoveCommand = "docker rm $containerName"
-$dockerImagePrune    = "docker image prune --all --force"
-$dockerSystemPrune    = "docker system prune -f"
+$KubectlDelBucketCmd = "docker exec -it $containerName sh -c 'kubectl delete bucket dak-bucket'"
+$KindDelCmd          = "docker exec -it $containerName sh -c 'kind delete cluster'"
+$DockerStopCmd       = "docker stop $containerName"
+$DockerRemoveCmd     = "docker rm $containerName"
+$DockerImagePrune    = "docker image prune --all --force"
+$DockerSystemPrune   = "docker system prune -f"
 
 ## RUN commands ##
+Invoke-Expression -Command $KubectlDelBucketCmd
 
-# Execute Docker container to delete kind cluster
-Invoke-Expression -Command $dockerExecDelCommand
+Invoke-Expression -Command $KindDelCmd
 
-# Stop the Docker container
-Invoke-Expression -Command $dockerStopCommand
+Invoke-Expression -Command $DockerStopCmd
 
-# Remove the Docker container
-Invoke-Expression -Command $dockerRemoveCommand
-
-# Rebuild the Docker container
-Invoke-Expression -Command $dockerImagePrune
-
-# Rebuild the Docker container
-Invoke-Expression -Command $dockerSystemPrune
+Invoke-Expression -Command $DockerRemoveCmd
+# Remove Docker images
+Invoke-Expression -Command $DockerImagePrune
+# Remove Docker volumes
+Invoke-Expression -Command $DockerSystemPrune

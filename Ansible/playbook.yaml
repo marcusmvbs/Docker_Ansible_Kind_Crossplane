@@ -37,23 +37,26 @@
         mode: '0755'
 
     # Helm repo tasks
-    - name: Ingress-Nginx Helm Repo
-      ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    # - name: Ingress-Nginx Helm Repo
+    #   ansible.builtin.command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
     - name: Redis/SQL/Nginx Helm Repo
       ansible.builtin.command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-    - name: Prometheus Helm Repo
-      ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    - name: Crossplane Helm Repo
+      ansible.builtin.command: helm repo add crossplane-stable https://charts.crossplane.io/stable
 
-    - name: Fluent Bit Helm Repo
-      ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
+    # - name: Prometheus Helm Repo
+    #   ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
-    - name: Kasten Helm Repo
-      ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
+    # - name: Fluent Bit Helm Repo
+    #   ansible.builtin.command: helm repo add fluent https://fluent.github.io/helm-charts
 
-    - name: Strimzi Helm Repo
-      ansible.builtin.command: helm repo add strimzi https://strimzi.io/charts/
+    # - name: Kasten Helm Repo
+    #   ansible.builtin.command: helm repo add kasten https://charts.kasten.io/
+
+    # - name: Strimzi Helm Repo
+    #   ansible.builtin.command: helm repo add strimzi https://strimzi.io/charts/
 
     - name: Search Helm Charts
       ansible.builtin.command: helm search repo
@@ -61,44 +64,32 @@
     - name: Update Helm Repositories
       ansible.builtin.command: helm repo update
 
-    # Kind cluster creation and error handling
-    # - name: Check if Kind cluster exists
-    #   ansible.builtin.command: kind get clusters | grep kind
-    #   register: kind_cluster_check
-    #   ignore_errors: yes
-
     - name: Create Kind cluster
       ansible.builtin.command: kind create cluster --config=../kind-config/kind-config.yaml
-      # when: kind_cluster_check.rc != 0
 
     # Create namespaces on cluster environment
     - name: Create namespaces
       ansible.builtin.command: kubectl create namespace {{ item }}
       loop:
-        - nginxingress-ns
         - webserver-ns
-        - database-ns
-        - logs-ns
-        - cache-ns
-        - kafka-ns
-        - monitoring-ns
-        - kasten-ns
-    #   register: namespace_check
-    #   ignore_errors: yes
+        - crossplane-ns
 
     # - name: Create namespaces on kind-worker node
     #   ansible.builtin.command: kubectl create namespace {{ item }}
     #   loop: "{{ namespace_check.results | selectattr('failed', 'defined') | map(attribute='item') | list }}"
 
-    # Helm Install
-    - name: Helm installing nginx...
-      ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
+    # Helm Installation
+    # - name: Helm installing nginx...
+    #   ansible.builtin.command: helm install my-nginx bitnami/nginx --namespace webserver-ns
 
-    - name: Helm installing postgreSQL...
-      ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
+    # - name: Helm installing postgreSQL...
+    #   ansible.builtin.command: helm install my-postgresql bitnami/postgresql --namespace database-ns
+
+    - name: Helm installing crossplane...
+      ansible.builtin.command: helm install my-crossplane crossplane-stable/crossplane --namespace crossplane-ns
 
     # # - name: Install Ingress-Nginx using Helm ERROR
-    # #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --namespace nginxingress-ns
+    # #   ansible.builtin.command: helm install my-ingress-nginx ingress-nginx/ingress-nginx --dry-run --debug --namespace nginxingress-ns
 
     # - name: Helm installing Prometheus...
     #   ansible.builtin.command: helm install my-prometheus prometheus-community/prometheus --namespace monitoring-ns
@@ -115,10 +106,10 @@
     # - name: Helm installing Strimzi Kafka Operator...
     #   ansible.builtin.command: helm install my-strimzi strimzi/strimzi-kafka-operator --namespace kafka-ns
 
-    # Cluster configuration
+  #  Cluster configuration
     - name: Installing cluster configuration...
-      shell: ../kind-config/gitops_prep_env.sh
+      shell: ../kind-config/add_aws_bucket.sh
     
-    - name: Cluster configuration completed
-      ansible.builtin.debug:
-        msg: "Kubernetes Kind Cluster fully configured. Gitops Running!"
+    # - name: Cluster configuration completed
+    #   ansible.builtin.debug:
+    #     msg: "Kubernetes Kind Cluster fully configured. Gitops Running!"

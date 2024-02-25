@@ -6,31 +6,28 @@ $socket_volume = "/var/run/docker.sock:/var/run/docker.sock"
 $playbook_exec =  "ansible-playbook -i ../ansible/inventory.ini ../ansible/playbook.yaml"
 
 # Docker Variables
-$dockerBuildCommand  = "docker build -t $imageName ."
-$dockerExecDelCommand   = "docker exec -it $containerName sh -c 'kind delete cluster'"
-$dockerRunCommand    = "docker run -d $network_type -v $socket_volume --name $containerName $imageName"
-$dockerStopCommand   = "docker stop $containerName"
-$dockerRemoveCommand = "docker rm $containerName"
+$KubectlDelBucketCmd = "docker exec -it $containerName sh -c 'kubectl delete bucket dak-bucket'"
+$KindDelCmd          = "docker exec -it $containerName sh -c 'kind delete cluster'"
+$DockerStopCmd       = "docker stop $containerName"
+$DockerRemoveCmd     = "docker rm $containerName"
+$DockerBuildCmd      = "docker build -t $imageName ."
+$DockerRunCmd        = "docker run -d $network_type -v $socket_volume --name $containerName $imageName"
 
 # Ansible Variables
-$ansibleplaybook = "docker exec -it $containerName sh -c '$playbook_exec'"
+$AnsiblePlaybook = "docker exec -it $containerName sh -c '$playbook_exec'"
 
 ## RUN commands ##
-
+# Execute Kubectl on Docker container to delete AWS S3 Resource
+Invoke-Expression -Command $KubectlDelBucketCmd
 # Execute Docker container to delete kind cluster
-Invoke-Expression -Command $dockerExecDelCommand
-
+Invoke-Expression -Command $KindDelCmd
 # Stop the Docker container
-Invoke-Expression -Command $dockerStopCommand
-
+Invoke-Expression -Command $DockerStopCmd
 # Remove the Docker container
-Invoke-Expression -Command $dockerRemoveCommand
+Invoke-Expression -Command $DockerRemoveCmd
 
-# Rebuild the Docker container
-Invoke-Expression -Command $dockerBuildCommand
+Invoke-Expression -Command $DockerBuildCmd
 
-# Run Docker container
-Invoke-Expression -Command $dockerRunCommand
+Invoke-Expression -Command $DockerRunCmd
 
-# Execute Ansible tasks
-Invoke-Expression -Command $ansibleplaybook
+Invoke-Expression -Command $AnsiblePlaybook

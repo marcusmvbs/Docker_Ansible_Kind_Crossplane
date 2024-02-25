@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.nginx.deployment.name }}
+  namespace: {{ .Values.nginx.ingress.namespace }}
   labels:
     app: nginx
 spec:
@@ -20,3 +21,10 @@ spec:
           ports:
             - containerPort: {{ .Values.nginx.service.ports.port1 }}
             - containerPort: {{ .Values.nginx.service.ports.port2 }}
+          env:
+          - name: ENV1
+            value: "Hello from the environment variable"
+          - name: ENV2
+            value: "It is simple"
+          command: ['sh']
+          args: ['-c', 'printenv']
