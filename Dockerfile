@@ -34,7 +34,7 @@ RUN mkdir -p /ansible /kind-config
 # Storing Ansible, Kind, Crossplane-aws, credentials config files
 COPY Ansible/ /ansible/
 COPY Kind/ /kind-config/
-COPY .creds.txt /kind-config/charts/dev/aws/
+COPY .creds.txt /kind-config/charts/dev/aws/creds.txt
 RUN chmod +x /kind-config/add_aws_bucket.sh
 
 WORKDIR /kind-config/
