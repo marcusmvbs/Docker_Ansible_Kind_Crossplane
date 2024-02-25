@@ -30,10 +30,15 @@ $CreateS3Bucket         = "docker exec -it $containerName sh -c '$create_bucket'
 Invoke-Expression -Command $DockerBuildCmd
 # Run Docker container
 Invoke-Expression -Command $DockerRunCmd
+
 # Execute Ansible tasks
 Invoke-Expression -Command $AnsiblePlaybook
+Start-Sleep -Seconds 100
+
 # AWS Provider creation
 Invoke-Expression -Command $Crossplane_AWSProvider
+Start-Sleep -Seconds 170
+
 # Secret and Provider Config
 Invoke-Expression -Command $Secret_AwsCreds
 Invoke-Expression -Command $ProviderConfig

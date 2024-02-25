@@ -41,9 +41,12 @@ Invoke-Expression -Command $DockerRemoveCmd
 Invoke-Expression -Command $DockerBuildCmd
 Invoke-Expression -Command $DockerRunCmd
 Invoke-Expression -Command $AnsiblePlaybook
+Start-Sleep -Seconds 100
 
 # AWS Provider creation
 Invoke-Expression -Command $Crossplane_AWSProvider
+Start-Sleep -Seconds 170
+
 # Secret and Provider Config
 Invoke-Expression -Command $Secret_AwsCreds
 Invoke-Expression -Command $ProviderConfig
