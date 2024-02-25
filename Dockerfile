@@ -28,7 +28,6 @@ RUN mkdir -p /ansible /kind-config
 COPY Ansible/ /ansible/
 COPY Kind/ /kind-config/
 COPY .creds.txt /kind-config/charts/dev/aws/creds.txt
-RUN chmod +x /kind-config/add_aws_bucket.sh
 
 WORKDIR /kind-config/
 
